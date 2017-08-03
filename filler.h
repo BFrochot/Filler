@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   filler.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bfrochot <bfrochot@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cosi <cosi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/02 15:06:38 by bfrochot          #+#    #+#             */
-/*   Updated: 2017/08/02 19:15:14 by bfrochot         ###   ########.fr       */
+/*   Updated: 2017/08/04 00:04:28 by cosi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,12 @@ typedef struct	s_fil
 	int		pl;
 	int		pc;
 	int		ps;
+	int		cgt;
+	int		us[2];
+	int		him[2];
 }				t_fil;
+
+char	can_go_there(t_fil *fil, int x, int y);
+void	filler(t_fil *fil);
 
 #endif
