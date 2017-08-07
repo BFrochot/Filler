@@ -6,7 +6,7 @@
 /*   By: cosi <cosi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/02 18:42:40 by bfrochot          #+#    #+#             */
-/*   Updated: 2017/08/04 00:13:06 by cosi             ###   ########.fr       */
+/*   Updated: 2017/08/06 18:27:18 by cosi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,20 @@ void	init(t_fil	*fil)
 	fil->him[0] = 0;
 	fil->him[1] = 0;
 	free(fil->map);
+	fil->map = NULL;
+	fil->map2 = NULL;
+}
+void	last_piece(t_fil *f)
+{
+	int i;
+
+	i = -1;
+	if (!f->map2)
+		return ;
+	while (f->map[++i])
+		if (f->map[i] != f->ply && f->map2[i]!= 'o' && f->map2[i] != 'x' && f->map2[i] != f->map[i])
+			f->map[i] += 32;
+	free(f->map2);
 }
 
 int		main(void)
@@ -116,10 +130,15 @@ int		main(void)
 		free(line);
 		while ((i = get_next_line(0, &line)) > 0 && *line != 'P')
 			fil->map = ft_strjoinfree(fil->map, line, 3);
+		last_piece(fil);
+		fil->map2 = fil->map;
 		if (i == 0)
 			break ;
 		if (i == -1)
+		{
 			ft_putstr_fd("Error\n", 2);
+			break ;
+		}
 				// fil->fd = open("../asdfdgh", O_APPEND | O_WRONLY);
 				// ft_putstr_fd("\nmap = ", fil->fd);
 				// ft_putstr_fd(fil->map, fil->fd);
@@ -127,6 +146,5 @@ int		main(void)
 				// close(fil->fd);
 		piece(fil, line);
 		filler(fil);
-		free(fil->map);
 	}
 }

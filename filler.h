@@ -6,7 +6,7 @@
 /*   By: cosi <cosi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/02 15:06:38 by bfrochot          #+#    #+#             */
-/*   Updated: 2017/08/04 00:04:28 by cosi             ###   ########.fr       */
+/*   Updated: 2017/08/06 18:03:55 by cosi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 typedef struct	s_fil
 {
 	char	*map;
+	char	*map2;
 	char	*piece;
 	int		fd;
 	int		ply;
