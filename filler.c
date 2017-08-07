@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   filler.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cosi <cosi@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: bfrochot <bfrochot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/02 18:42:40 by bfrochot          #+#    #+#             */
-/*   Updated: 2017/08/06 18:27:18 by cosi             ###   ########.fr       */
+/*   Updated: 2017/08/07 19:34:47 by bfrochot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,9 @@ void	init(t_fil	*fil)
 	free(fil->map);
 	fil->map = NULL;
 	fil->map2 = NULL;
+	fil->last = 0;
+	fil->start = 0;
+	f->mid = 0;
 }
 void	last_piece(t_fil *f)
 {
@@ -104,10 +107,18 @@ void	last_piece(t_fil *f)
 
 	i = -1;
 	if (!f->map2)
+	{
+		while (f->map[++i])
+			if (f->map[i] == f->ply)
+				fil->start = i;
 		return ;
+	}
 	while (f->map[++i])
 		if (f->map[i] != f->ply && f->map2[i]!= 'o' && f->map2[i] != 'x' && f->map2[i] != f->map[i])
+		{
 			f->map[i] += 32;
+			f->last = i;
+		}
 	free(f->map2);
 }
 
@@ -131,7 +142,6 @@ int		main(void)
 		while ((i = get_next_line(0, &line)) > 0 && *line != 'P')
 			fil->map = ft_strjoinfree(fil->map, line, 3);
 		last_piece(fil);
-		fil->map2 = fil->map;
 		if (i == 0)
 			break ;
 		if (i == -1)
@@ -146,5 +156,6 @@ int		main(void)
 				// close(fil->fd);
 		piece(fil, line);
 		filler(fil);
+		fil->map2 = fil->map;
 	}
 }
