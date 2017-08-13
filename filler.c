@@ -6,7 +6,7 @@
 /*   By: bfrochot <bfrochot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/02 18:42:40 by bfrochot          #+#    #+#             */
-/*   Updated: 2017/08/13 18:15:12 by bfrochot         ###   ########.fr       */
+/*   Updated: 2017/08/13 19:13:03 by bfrochot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,14 @@ void	touch(t_fil *fil, int x, int y)
 		{
 			if (fil->piece[i - y + line * fil->pc] == '*')
 			{
+				// ft_putstr_fd("col = ", 2);
+				// ft_putnbr_fd(fil->col, 2);
+				// ft_putstr_fd("et i = ", 2);
+				// ft_putnbr_fd(i, 2);
+				// ft_putstr_fd("\n", 2);
 				if (i == 0)
 					fil->touch_left = 1;
-				else if (i == fil->col)
+				else if (i == fil->col - 1)
 					fil->touch_right = 1;
 				else if (line + x == fil->lig)
 					fil->touch_bot = 1;
@@ -130,6 +135,10 @@ void	init(t_fil	*fil)
 	fil->last = 0;
 	fil->start = 0;
 	fil->mid = 0;
+	fil->touch_top = 0;
+	fil->touch_bot = 0;
+	fil->touch_right = 0;
+	fil->touch_left = 0;
 }
 void	last_piece(t_fil *f)
 {

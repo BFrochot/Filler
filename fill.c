@@ -189,6 +189,41 @@ void	result(int i, int j, char *end)
 	*end = 1;
 }
 
+void	test(t_fil *f)
+{
+	int i;
+	int j;
+	int k;
+	int l;
+	char end;
+
+	end = 0;
+	i = f->last / (4 + f->col);
+	j = f->last / (4 + f->col);
+	while ((j > -1 * f->pl + 1 || i < f->lig + f->pl) && !end)
+	{
+		k = f->last % (4 + f->col) - 4;
+		l = f->last % (4 + f->col) - 4;
+		while ((l > -1 * f->pc + 1 || k < f->col + f->pc) && !end)
+		{
+			if (can_go_there(f, i, k))
+				result(i, k, &end);
+			if (!end && can_go_there(f, i, l))
+				result(i, l, &end);
+			if (!end && can_go_there(f, j, k))
+				result(j, k, &end);
+			if (!end && can_go_there(f, j, l))
+				result(j, l, &end);
+			++k;
+			--l;
+		}
+		++i;
+		--j;
+	}
+	if (!end)
+		ft_putchar('\n');
+}
+
 void	filler(t_fil *f)
 {
 	if (!f->map2)
@@ -252,12 +287,19 @@ void	filler(t_fil *f)
 	{
 		if (f->cases == 1)
 		{
+			ft_putstr_fd("\n\ncase1\n\n", 2);
 			if (!f->touch_right)
+			{
+			ft_putstr_fd("\n\nICI1\n\n", 2);
 				left(f);
+			}
 			else if (!f->touch_bot)
+			{
+			ft_putstr_fd("\n\nICI2\n\n", 2);
 				asc_right(f);
+			}
 			else 
-				asc_left(f);
+				test(f);
 		}
 		if (f->cases == 2)
 		{
@@ -266,7 +308,7 @@ void	filler(t_fil *f)
 			else if (!f->touch_top)
 				des_right(f);
 			else 
-				des_left(f);
+				test(f);
 		}
 		if (f->cases == 3)
 		{
@@ -275,7 +317,7 @@ void	filler(t_fil *f)
 			else if (!f->touch_bot)
 				asc_left(f);
 			else 
-				asc_right(f);
+				test(f);
 		}
 		if (f->cases == 4)
 		{
@@ -284,7 +326,7 @@ void	filler(t_fil *f)
 			else if (!f->touch_top)
 				des_left(f);
 			else 
-				des_right(f);
+				test(f);
 		}
 	}
 }
