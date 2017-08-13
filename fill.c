@@ -1,17 +1,17 @@
 #include "filler.h"
 
-void	asc_left(t_fil *fil)
+void	left(t_fil *fil)
 {
 	int i;
 	int j;
 	char end;
 
 	end = 0;
-	j = fil->lig + fil->pl;
-	while (j > -1 * fil->pl + 1 && !end)
+	i = fil->col + fil->pc;
+	while (i > -1 * fil->pc + 1 && !end)
 	{
-		i = -1 * fil->pc + 1;
-		while (i < fil->col + fil->pc && !end)
+		j = fil->lig + fil->pl;
+		while (j > -1 * fil->pl + 1 && !end)
 		{
 			if (can_go_there(fil, j, i))
 			{
@@ -20,11 +20,41 @@ void	asc_left(t_fil *fil)
 				ft_putnbr(i);
 				ft_putchar('\n');
 				end = 1;
-				f->lastus = j * (fil->col + 4) + i + 4;
+				fil->lastus = j * (fil->col + 4) + i + 4;
 			}
-			++i;
+			--j;
 		}
-		--j;
+		--i;
+	}
+	if (!end)
+		ft_putchar('\n');
+}
+
+void	right(t_fil *fil)
+{
+	int i;
+	int j;
+	char end;
+
+	end = 0;
+	i = -1 * fil->pc + 1;
+	while (i < fil->col + fil->pc && !end)
+	{
+		j = fil->lig + fil->pl;
+		while (j > -1 * fil->pl + 1 && !end)
+		{
+			if (can_go_there(fil, j, i))
+			{
+				ft_putnbr(j);
+				ft_putchar(' ');
+				ft_putnbr(i);
+				ft_putchar('\n');
+				end = 1;
+				fil->lastus = j * (fil->col + 4) + i + 4;
+			}
+			--j;
+		}
+		++i;
 	}
 	if (!end)
 		ft_putchar('\n');
@@ -40,6 +70,36 @@ void	asc_right(t_fil *fil)
 	j = fil->lig + fil->pl;
 	while (j > -1 * fil->pl + 1 && !end)
 	{
+		i = -1 * fil->pc + 1;
+		while (i < fil->col + fil->pc && !end)
+		{
+			if (can_go_there(fil, j, i))
+			{
+				ft_putnbr(j);
+				ft_putchar(' ');
+				ft_putnbr(i);
+				ft_putchar('\n');
+				end = 1;
+				fil->lastus = j * (fil->col + 4) + i + 4;
+			}
+			++i;
+		}
+		--j;
+	}
+	if (!end)
+		ft_putchar('\n');
+}
+
+void	asc_left(t_fil *fil)
+{
+	int i;
+	int j;
+	char end;
+
+	end = 0;
+	j = fil->lig + fil->pl;
+	while (j > -1 * fil->pl + 1 && !end)
+	{
 		i = fil->col + fil->pc;
 		while (i > -1 * fil->pc + 1 && !end)
 		{
@@ -50,7 +110,7 @@ void	asc_right(t_fil *fil)
 				ft_putnbr(i);
 				ft_putchar('\n');
 				end = 1;
-				f->lastus = j * (fil->col + 4) + i + 4;
+				fil->lastus = j * (fil->col + 4) + i + 4;
 			}
 			--i;
 		}
@@ -60,7 +120,7 @@ void	asc_right(t_fil *fil)
 		ft_putchar('\n');
 }
 
-void	des_right(t_fil *fil)
+void	des_left(t_fil *fil)
 {
 	int i;
 	int j;
@@ -80,7 +140,7 @@ void	des_right(t_fil *fil)
 				ft_putnbr(i);
 				ft_putchar('\n');
 				end = 1;
-				f->lastus = j * (fil->col + 4) + i + 4;
+				fil->lastus = j * (fil->col + 4) + i + 4;
 			}
 			--i;
 		}
@@ -90,7 +150,7 @@ void	des_right(t_fil *fil)
 		ft_putchar('\n');
 }
 
-void	des_left(t_fil *fil)
+void	des_right(t_fil *fil)
 {
 	int i;
 	int j;
@@ -110,7 +170,7 @@ void	des_left(t_fil *fil)
 				ft_putnbr(i);
 				ft_putchar('\n');
 				end = 1;
-				f->lastus = j * (fil->col + 4) + i + 4;
+				fil->lastus = j * (fil->col + 4) + i + 4;
 			}
 			++i;
 		}
@@ -137,11 +197,13 @@ void	filler(t_fil *f)
 		{
 			if (f->start / (4 + f->col) < f->lig / 2)
 			{
+				ft_putstr_fd("\nCase1\n", 2);
 				asc_left(f);
 				f->cases = 1;
 			}
 			else
 			{
+				ft_putstr_fd("\nCase2\n", 2);
 				des_left(f);
 				f->cases = 2;
 			}
@@ -150,11 +212,13 @@ void	filler(t_fil *f)
 		{
 			if (f->start / (4 + f->col) < f->lig / 2)
 			{
+				ft_putstr_fd("\nCase3\n", 2);
 				asc_right(f);
 				f->cases = 3;
 			}
 			else
 			{
+				ft_putstr_fd("\nCase4\n", 2);
 				des_right(f);
 				f->cases = 4;
 			}
@@ -162,52 +226,63 @@ void	filler(t_fil *f)
 	}
 	else if (!f->mid)
 	{
-		if (f->cases = 1 && f->lastus % (4 + f->col - 4) < f->col / 2 && f->lastus / (4 + f->col) < f->lig / 2)
+		if (f->cases == 1 && f->lastus % (4 + f->col) - 4 < f->col / 2 && f->lastus / (4 + f->col) < f->lig / 2)
+		{
 				asc_left(f);
-		else if (f->cases = 2 && f->lastus % (4 + f->col - 4) < f->col / 2 && f->lastus / (4 + f->col) >= f->lig / 2)
+		}
+		else if (f->cases == 2 && f->lastus % (4 + f->col) - 4 < f->col / 2 && f->lastus / (4 + f->col) >= f->lig / 2)
+		{
 				des_left(f);
-		else if (f->cases = 3 && f->lastus % (4 + f->col - 4) >= f->col / 2 && f->lastus / (4 + f->col) < f->lig / 2)
+		}
+		else if (f->cases == 3 && f->lastus % (4 + f->col) - 4 >= f->col / 2 && f->lastus / (4 + f->col) < f->lig / 2)
+		{
 				asc_right(f);
-		else if (f->cases = 3 && f->lastus % (4 + f->col - 4) >= f->col / 2 && f->lastus / (4 + f->col) >= f->lig / 2)
+		}
+		else if (f->cases == 4 && f->lastus % (4 + f->col) - 4 >= f->col / 2 && f->lastus / (4 + f->col) >= f->lig / 2)
+		{
 				des_right(f);
+		}
 		else
+		{
 			f->mid = 1;
+			filler(f);
+		}
 	}
 	else
 	{
-		if (f->cases = 1)
+		if (f->cases == 1)
 		{
 			if (!f->touch_right)
 				left(f);
 			else if (!f->touch_bot)
-				asc(f);
+				asc_right(f);
 			else 
 				asc_left(f);
 		}
-		if (f->cases = 2)
+		if (f->cases == 2)
 		{
 			if (!f->touch_right)
 				left(f);
 			else if (!f->touch_top)
-				des(f);
+				des_right(f);
 			else 
 				des_left(f);
 		}
-		if (f->cases = 3)
+		if (f->cases == 3)
 		{
 			if (!f->touch_left)
 				right(f);
 			else if (!f->touch_bot)
-				asc(f);
+				asc_left(f);
 			else 
 				asc_right(f);
 		}
-		if (f->cases = 4)
+		if (f->cases == 4)
 		{
 			if (!f->touch_left)
 				right(f);
 			else if (!f->touch_top)
-				des(f);
+				des_left(f);
 			else 
 				des_right(f);
 		}

@@ -6,11 +6,39 @@
 /*   By: bfrochot <bfrochot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/02 18:42:40 by bfrochot          #+#    #+#             */
-/*   Updated: 2017/08/07 19:34:47 by bfrochot         ###   ########.fr       */
+/*   Updated: 2017/08/13 18:15:12 by bfrochot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "filler.h"
+
+void	touch(t_fil *fil, int x, int y)
+{
+	int line;
+	int i;
+
+	line = 0;
+	while (line < fil->pl)
+	{
+		i = y;
+		while (i - y < fil->pc)
+		{
+			if (fil->piece[i - y + line * fil->pc] == '*')
+			{
+				if (i == 0)
+					fil->touch_left = 1;
+				else if (i == fil->col)
+					fil->touch_right = 1;
+				else if (line + x == fil->lig)
+					fil->touch_bot = 1;
+				else if (line + x == 0)
+					fil->touch_top = 1;
+			}
+			++i;
+		}
+		++line;
+	}
+}
 
 char	can_go_there(t_fil *fil, int x, int y)
 {
@@ -37,9 +65,9 @@ char	can_go_there(t_fil *fil, int x, int y)
 			}
 			else
 			{
-				fil->cgt = i + 4 + (line + x) * (4 + fil->col);
 				if (fil->piece[j + line * fil->pc] == '*')
 				{
+					fil->cgt = i + 4 + (line + x) * (4 + fil->col);
 					if (fil->map[fil->cgt] == fil->ply)
 						++crash;
 					else if (fil->map[fil->cgt] != '.')
@@ -54,6 +82,8 @@ char	can_go_there(t_fil *fil, int x, int y)
 		}
 		++line;
 	}
+	if (crash == 1)
+		touch(fil, x, y);
 	return (crash == 1 ? 1 : 0);
 }
 
@@ -99,7 +129,7 @@ void	init(t_fil	*fil)
 	fil->map2 = NULL;
 	fil->last = 0;
 	fil->start = 0;
-	f->mid = 0;
+	fil->mid = 0;
 }
 void	last_piece(t_fil *f)
 {
@@ -110,7 +140,7 @@ void	last_piece(t_fil *f)
 	{
 		while (f->map[++i])
 			if (f->map[i] == f->ply)
-				fil->start = i;
+				f->start = i;
 		return ;
 	}
 	while (f->map[++i])
