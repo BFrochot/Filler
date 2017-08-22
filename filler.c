@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   filler.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cosi <cosi@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: bfrochot <bfrochot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/02 18:42:40 by bfrochot          #+#    #+#             */
-/*   Updated: 2017/08/22 18:54:01 by cosi             ###   ########.fr       */
+/*   Updated: 2017/08/22 19:39:22 by bfrochot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,14 +25,22 @@ void	touch(t_fil *fil, int x, int y)
 		{
 			if (fil->piece[i - y + line * fil->pc] == '*')
 			{
-				if (i == 0 || fil->map[3 + i + (fil->col + 4) * (line + x)] != '.')
+				if (i == 0)
 					fil->touch_left = 1;
-				else if (i == fil->col - 1 || fil->map[5 + i + (fil->col + 4) * (line + x)] != '.')
+				else if (fil->tl < 50 && fil->map[3 + i + (fil->col + 4) * (line + x)] == (fil->ply == 'O' ? 'X' : 'O'))
+					fil->tl += 1;
+				else if (i == fil->col - 1)
 					fil->touch_right = 1;
-				else if (line + x == fil->lig - 1 || fil->map[4 + i + (fil->col + 4) * (line + x + 1)] != '.')
+				else if (fil->tr < 50 && fil->map[5 + i + (fil->col + 4) * (line + x)] == (fil->ply == 'O' ? 'X' : 'O'))
+					fil->tr += 1;
+				else if (line + x == fil->lig - 1)
 					fil->touch_bot = 1;
-				else if (line + x == 0 || fil->map[3 + i + (fil->col + 4) * (line + x - 1)] != '.')
+				else if (fil->tb < 50 && fil->map[4 + i + (fil->col + 4) * (line + x + 1)] == (fil->ply == 'O' ? 'X' : 'O'))
+					fil->tb += 1;
+				else if (line + x == 0)
 					fil->touch_top = 1;
+				else if (fil->tt < 50 && fil->map[3 + i + (fil->col + 4) * (line + x - 1)] == (fil->ply == 'O' ? 'X' : 'O'))
+					fil->tt += 1;
 			}
 			++i;
 		}
@@ -131,9 +139,13 @@ void	init(t_fil	*fil)
 	fil->start = 0;
 	fil->mid = 0;
 	fil->touch_top = 0;
+	fil->tt = 0;
 	fil->touch_bot = 0;
+	fil->tb = 0;
 	fil->touch_right = 0;
+	fil->tr = 0;
 	fil->touch_left = 0;
+	fil->tl = 0;
 }
 
 void	last_piece(t_fil *f)

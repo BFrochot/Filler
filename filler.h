@@ -6,7 +6,7 @@
 /*   By: bfrochot <bfrochot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/02 15:06:38 by bfrochot          #+#    #+#             */
-/*   Updated: 2017/08/13 18:14:59 by bfrochot         ###   ########.fr       */
+/*   Updated: 2017/08/22 19:19:28 by bfrochot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,13 @@ typedef struct	s_fil
 	int		lastus;
 	int		cases;
 	char	touch_top;
+	char	tt;
 	char	touch_bot;
+	char	tb;
 	char	touch_right;
+	char	tr;
 	char	touch_left;
+	char	tl;
 	char	mid;
 }				t_fil;
 

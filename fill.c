@@ -10,7 +10,33 @@ void	result(int i, int j, char *end, t_fil *f)
 	free(f->piece);
 }
 
-void	left(t_fil *fil)
+void	left_des(t_fil *fil)
+{
+	int i;
+	int j;
+	char end;
+
+	end = 0;
+	i = fil->col + fil->pc;
+	while (i > -1 * fil->pc + 1 && !end)
+	{
+		j = -1 * fil->pl + 1;
+		while (j < fil->lig + fil->pl && !end)
+		{
+			if (can_go_there(fil, j, i))
+			{
+				result(j, i, &end, fil);
+				fil->lastus = j * (fil->col + 4) + i + 4;
+			}
+			++j;
+		}
+		--i;
+	}
+	if (!end)
+		ft_putchar('\n');
+}
+
+void	left_asc(t_fil *fil)
 {
 	int i;
 	int j;
@@ -36,7 +62,33 @@ void	left(t_fil *fil)
 		ft_putchar('\n');
 }
 
-void	right(t_fil *fil)
+void	right_des(t_fil *fil)
+{
+	int i;
+	int j;
+	char end;
+
+	end = 0;
+	i = -1 * fil->pc + 1;
+	while (i < fil->col + fil->pc && !end)
+	{
+		j = -1 * fil->pl + 1;
+		while (j < fil->lig + fil->pl && !end)
+		{
+			if (can_go_there(fil, j, i))
+			{
+				result(j, i, &end, fil);
+				fil->lastus = j * (fil->col + 4) + i + 4;
+			}
+			++j;
+		}
+		++i;
+	}
+	if (!end)
+		ft_putchar('\n');
+}
+
+void	right_asc(t_fil *fil)
 {
 	int i;
 	int j;
@@ -209,13 +261,13 @@ void	filler(t_fil *f)
 		{
 			if (f->start / (4 + f->col) < f->lig / 2)
 			{
-				ft_putstr_fd("\nCase1\n", 2);
+				// ft_putstr_fd("\nCase1\n", 2);
 				asc_left(f);
 				f->cases = 1;
 			}
 			else
 			{
-				ft_putstr_fd("\nCase2\n", 2);
+				// ft_putstr_fd("\nCase2\n", 2);
 				des_left(f);
 				f->cases = 2;
 			}
@@ -224,13 +276,13 @@ void	filler(t_fil *f)
 		{
 			if (f->start / (4 + f->col) < f->lig / 2)
 			{
-				ft_putstr_fd("\nCase3\n", 2);
+				// ft_putstr_fd("\nCase3\n", 2);
 				asc_right(f);
 				f->cases = 3;
 			}
 			else
 			{
-				ft_putstr_fd("\nCase4\n", 2);
+				// ft_putstr_fd("\nCase4\n", 2);
 				des_right(f);
 				f->cases = 4;
 			}
@@ -264,44 +316,44 @@ void	filler(t_fil *f)
 	{
 		if (f->cases == 1)
 		{
-			if (!f->touch_right)
-				left(f);
-			// else if (!f->touch_left)
-				// right(f);
-			else if (!f->touch_bot)
+			if (!f->touch_right && f->tr < 5)
+				left_asc(f);
+			else if (!f->touch_left && f->tl < 10)
+				right_asc(f);
+			else if (!f->touch_bot && f->tr < 5)
 				asc_right(f);
 			else
 				test(f);
 		}
 		if (f->cases == 2)
 		{
-			if (!f->touch_right)
-				left(f);
-			// else if (!f->touch_left)
-				// right(f);
-			else if (!f->touch_top)
+			if (!f->touch_right && f->tr < 5)
+				left_des(f);
+			else if (!f->touch_left && f->tl < 10)
+				right_des(f);
+			else if (!f->touch_top && f->tt < 5)
 				des_right(f);
 			else 
 				test(f);
 		}
 		if (f->cases == 3)
 		{
-			if (!f->touch_left)
-				right(f);
-			// else if (!f->touch_right)
-				// left(f);
-			else if (!f->touch_bot)
+			if (!f->touch_left && f->tl < 5)
+				right_asc(f);
+			else if (!f->touch_right && f->tr < 10)
+				left_asc(f);
+			else if (!f->touch_bot && f->tb < 5)
 				asc_left(f);
 			else 
 				test(f);
 		}
 		if (f->cases == 4)
 		{
-			if (!f->touch_left)
-				right(f);
-			// else if (!f->touch_right)
-				// left(f);
-			else if (!f->touch_top)
+			if (!f->touch_left && f->tl < 5)
+				right_des(f);
+			else if (!f->touch_right && f->tr < 10)
+				left_des(f);
+			else if (!f->touch_top && f->tt < 5)
 				des_left(f);
 			else 
 				test(f);

@@ -1,0 +1,1 @@
+./filler_vm -q -f maps/map00 -p2 players/bfrochot.filler -p1 players/abanlin.filler
