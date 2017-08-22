@@ -1,5 +1,15 @@
 #include "filler.h"
 
+void	result(int i, int j, char *end, t_fil *f)
+{
+	ft_putnbr(i);
+	ft_putchar(' ');
+	ft_putnbr(j);
+	ft_putchar('\n');
+	*end = 1;
+	free(f->piece);
+}
+
 void	left(t_fil *fil)
 {
 	int i;
@@ -15,11 +25,7 @@ void	left(t_fil *fil)
 		{
 			if (can_go_there(fil, j, i))
 			{
-				ft_putnbr(j);
-				ft_putchar(' ');
-				ft_putnbr(i);
-				ft_putchar('\n');
-				end = 1;
+				result(j, i, &end, fil);
 				fil->lastus = j * (fil->col + 4) + i + 4;
 			}
 			--j;
@@ -45,11 +51,7 @@ void	right(t_fil *fil)
 		{
 			if (can_go_there(fil, j, i))
 			{
-				ft_putnbr(j);
-				ft_putchar(' ');
-				ft_putnbr(i);
-				ft_putchar('\n');
-				end = 1;
+				result(j, i, &end, fil);
 				fil->lastus = j * (fil->col + 4) + i + 4;
 			}
 			--j;
@@ -75,11 +77,7 @@ void	asc_right(t_fil *fil)
 		{
 			if (can_go_there(fil, j, i))
 			{
-				ft_putnbr(j);
-				ft_putchar(' ');
-				ft_putnbr(i);
-				ft_putchar('\n');
-				end = 1;
+				result(j, i, &end, fil);
 				fil->lastus = j * (fil->col + 4) + i + 4;
 			}
 			++i;
@@ -105,11 +103,7 @@ void	asc_left(t_fil *fil)
 		{
 			if (can_go_there(fil, j, i))
 			{
-				ft_putnbr(j);
-				ft_putchar(' ');
-				ft_putnbr(i);
-				ft_putchar('\n');
-				end = 1;
+				result(j, i, &end, fil);
 				fil->lastus = j * (fil->col + 4) + i + 4;
 			}
 			--i;
@@ -135,11 +129,7 @@ void	des_left(t_fil *fil)
 		{
 			if (can_go_there(fil, j, i))
 			{
-				ft_putnbr(j);
-				ft_putchar(' ');
-				ft_putnbr(i);
-				ft_putchar('\n');
-				end = 1;
+				result(j, i, &end, fil);
 				fil->lastus = j * (fil->col + 4) + i + 4;
 			}
 			--i;
@@ -165,11 +155,7 @@ void	des_right(t_fil *fil)
 		{
 			if (can_go_there(fil, j, i))
 			{
-				ft_putnbr(j);
-				ft_putchar(' ');
-				ft_putnbr(i);
-				ft_putchar('\n');
-				end = 1;
+				result(j, i, &end, fil);
 				fil->lastus = j * (fil->col + 4) + i + 4;
 			}
 			++i;
@@ -178,15 +164,6 @@ void	des_right(t_fil *fil)
 	}
 	if (!end)
 		ft_putchar('\n');
-}
-
-void	result(int i, int j, char *end)
-{
-	ft_putnbr(i);
-	ft_putchar(' ');
-	ft_putnbr(j);
-	ft_putchar('\n');
-	*end = 1;
 }
 
 void	test(t_fil *f)
@@ -207,13 +184,13 @@ void	test(t_fil *f)
 		while ((l > -1 * f->pc + 1 || k < f->col + f->pc) && !end)
 		{
 			if (can_go_there(f, i, k))
-				result(i, k, &end);
+				result(i, k, &end, f);
 			if (!end && can_go_there(f, i, l))
-				result(i, l, &end);
+				result(i, l, &end, f);
 			if (!end && can_go_there(f, j, k))
-				result(j, k, &end);
+				result(j, k, &end, f);
 			if (!end && can_go_there(f, j, l))
-				result(j, l, &end);
+				result(j, l, &end, f);
 			++k;
 			--l;
 		}
@@ -265,7 +242,7 @@ void	filler(t_fil *f)
 		{
 				asc_left(f);
 		}
-		else if (f->cases == 2 && f->lastus % (4 + f->col) - 4 < f->col / 2 && f->lastus / (4 + f->col) >= f->lig / 2)
+		else if (f->cases == 2 && f->lastus % (4 + f->col) - 4 < f->col / 2 && f->lastus / (4 + f->col) > f->lig / 2)
 		{
 				des_left(f);
 		}
@@ -273,7 +250,7 @@ void	filler(t_fil *f)
 		{
 				asc_right(f);
 		}
-		else if (f->cases == 4 && f->lastus % (4 + f->col) - 4 >= f->col / 2 && f->lastus / (4 + f->col) >= f->lig / 2)
+		else if (f->cases == 4 && f->lastus % (4 + f->col) - 4 >= f->col / 2 && f->lastus / (4 + f->col) > f->lig / 2)
 		{
 				des_right(f);
 		}
@@ -287,24 +264,21 @@ void	filler(t_fil *f)
 	{
 		if (f->cases == 1)
 		{
-			ft_putstr_fd("\n\ncase1\n\n", 2);
 			if (!f->touch_right)
-			{
-			ft_putstr_fd("\n\nICI1\n\n", 2);
 				left(f);
-			}
+			// else if (!f->touch_left)
+				// right(f);
 			else if (!f->touch_bot)
-			{
-			ft_putstr_fd("\n\nICI2\n\n", 2);
 				asc_right(f);
-			}
-			else 
+			else
 				test(f);
 		}
 		if (f->cases == 2)
 		{
 			if (!f->touch_right)
 				left(f);
+			// else if (!f->touch_left)
+				// right(f);
 			else if (!f->touch_top)
 				des_right(f);
 			else 
@@ -314,6 +288,8 @@ void	filler(t_fil *f)
 		{
 			if (!f->touch_left)
 				right(f);
+			// else if (!f->touch_right)
+				// left(f);
 			else if (!f->touch_bot)
 				asc_left(f);
 			else 
@@ -323,6 +299,8 @@ void	filler(t_fil *f)
 		{
 			if (!f->touch_left)
 				right(f);
+			// else if (!f->touch_right)
+				// left(f);
 			else if (!f->touch_top)
 				des_left(f);
 			else 

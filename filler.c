@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   filler.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bfrochot <bfrochot@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cosi <cosi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/02 18:42:40 by bfrochot          #+#    #+#             */
-/*   Updated: 2017/08/13 19:13:03 by bfrochot         ###   ########.fr       */
+/*   Updated: 2017/08/22 18:54:01 by cosi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,18 +25,13 @@ void	touch(t_fil *fil, int x, int y)
 		{
 			if (fil->piece[i - y + line * fil->pc] == '*')
 			{
-				// ft_putstr_fd("col = ", 2);
-				// ft_putnbr_fd(fil->col, 2);
-				// ft_putstr_fd("et i = ", 2);
-				// ft_putnbr_fd(i, 2);
-				// ft_putstr_fd("\n", 2);
-				if (i == 0)
+				if (i == 0 || fil->map[3 + i + (fil->col + 4) * (line + x)] != '.')
 					fil->touch_left = 1;
-				else if (i == fil->col - 1)
+				else if (i == fil->col - 1 || fil->map[5 + i + (fil->col + 4) * (line + x)] != '.')
 					fil->touch_right = 1;
-				else if (line + x == fil->lig)
+				else if (line + x == fil->lig - 1 || fil->map[4 + i + (fil->col + 4) * (line + x + 1)] != '.')
 					fil->touch_bot = 1;
-				else if (line + x == 0)
+				else if (line + x == 0 || fil->map[3 + i + (fil->col + 4) * (line + x - 1)] != '.')
 					fil->touch_top = 1;
 			}
 			++i;
@@ -140,6 +135,7 @@ void	init(t_fil	*fil)
 	fil->touch_right = 0;
 	fil->touch_left = 0;
 }
+
 void	last_piece(t_fil *f)
 {
 	int i;
@@ -188,11 +184,11 @@ int		main(void)
 			ft_putstr_fd("Error\n", 2);
 			break ;
 		}
-				// fil->fd = open("../asdfdgh", O_APPEND | O_WRONLY);
-				// ft_putstr_fd("\nmap = ", fil->fd);
-				// ft_putstr_fd(fil->map, fil->fd);
-				// ft_putstr_fd("STOP\n", fil->fd);
-				// close(fil->fd);
+				fil->fd = open("../asdfdgh", O_APPEND | O_WRONLY);
+				ft_putstr_fd("\nmap = ", fil->fd);
+				ft_putstr_fd(fil->map, fil->fd);
+				ft_putstr_fd("STOP\n", fil->fd);
+				close(fil->fd);
 		piece(fil, line);
 		filler(fil);
 		fil->map2 = fil->map;
