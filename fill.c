@@ -33,7 +33,7 @@ void	left_des(t_fil *fil)
 		--i;
 	}
 	if (!end)
-		ft_putchar('\n');
+		ft_putstr("0 0\n");
 }
 
 void	left_asc(t_fil *fil)
@@ -59,7 +59,7 @@ void	left_asc(t_fil *fil)
 		--i;
 	}
 	if (!end)
-		ft_putchar('\n');
+		ft_putstr("0 0\n");
 }
 
 void	right_des(t_fil *fil)
@@ -69,7 +69,7 @@ void	right_des(t_fil *fil)
 	char end;
 
 	end = 0;
-	i = -1 * fil->pc + 1;
+	i = -fil->pc;
 	while (i < fil->col + fil->pc && !end)
 	{
 		j = -1 * fil->pl + 1;
@@ -85,7 +85,7 @@ void	right_des(t_fil *fil)
 		++i;
 	}
 	if (!end)
-		ft_putchar('\n');
+		ft_putstr("0 0\n");
 }
 
 void	right_asc(t_fil *fil)
@@ -95,7 +95,7 @@ void	right_asc(t_fil *fil)
 	char end;
 
 	end = 0;
-	i = -1 * fil->pc + 1;
+	i = -fil->pc;
 	while (i < fil->col + fil->pc && !end)
 	{
 		j = fil->lig + fil->pl;
@@ -111,7 +111,7 @@ void	right_asc(t_fil *fil)
 		++i;
 	}
 	if (!end)
-		ft_putchar('\n');
+		ft_putstr("0 0\n");
 }
 
 void	asc_right(t_fil *fil)
@@ -137,7 +137,7 @@ void	asc_right(t_fil *fil)
 		--j;
 	}
 	if (!end)
-		ft_putchar('\n');
+		ft_putstr("0 0\n");
 }
 
 void	asc_left(t_fil *fil)
@@ -163,7 +163,7 @@ void	asc_left(t_fil *fil)
 		--j;
 	}
 	if (!end)
-		ft_putchar('\n');
+		ft_putstr("0 0\n");
 }
 
 void	des_left(t_fil *fil)
@@ -189,7 +189,7 @@ void	des_left(t_fil *fil)
 		++j;
 	}
 	if (!end)
-		ft_putchar('\n');
+		ft_putstr("0 0\n");
 }
 
 void	des_right(t_fil *fil)
@@ -215,7 +215,7 @@ void	des_right(t_fil *fil)
 		++j;
 	}
 	if (!end)
-		ft_putchar('\n');
+		ft_putstr("0 0\n");
 }
 
 void	test(t_fil *f)
@@ -227,30 +227,28 @@ void	test(t_fil *f)
 	char end;
 
 	end = 0;
+	l = 0;
 	i = f->last / (4 + f->col);
-	j = f->last / (4 + f->col);
-	while ((j > -1 * f->pl + 1 || i < f->lig + f->pl) && !end)
+	k = f->last % (4 + f->col) - 4;
+	while ((i + l < f->lig + f->pl || i - l > -f->pl || k + l < f->col + f->pc || k - l > -f->pc) && !end)
 	{
-		k = f->last % (4 + f->col) - 4;
-		l = f->last % (4 + f->col) - 4;
-		while ((l > -1 * f->pc + 1 || k < f->col + f->pc) && !end)
+		j = -l;
+		while (j != l && !end)
 		{
-			if (can_go_there(f, i, k))
-				result(i, k, &end, f);
-			if (!end && can_go_there(f, i, l))
-				result(i, l, &end, f);
-			if (!end && can_go_there(f, j, k))
-				result(j, k, &end, f);
-			if (!end && can_go_there(f, j, l))
-				result(j, l, &end, f);
-			++k;
-			--l;
+			if (can_go_there(f, i - l, k + j))
+				result(i - l, k + j, &end, f);
+			if (can_go_there(f, i + l, k + j) && !end)
+				result(i + l, k + j, &end, f);
+			if (can_go_there(f, i + j, k + l) && !end)
+				result(i + j, k + l, &end, f);
+			if (can_go_there(f, i + j, k - l) && !end)
+				result(i + j, k - l, &end, f);
+			++j;
 		}
-		++i;
-		--j;
+		++l;
 	}
 	if (!end)
-		ft_putchar('\n');
+		ft_putstr("0 0\n");
 }
 
 void	filler(t_fil *f)
@@ -291,21 +289,17 @@ void	filler(t_fil *f)
 	else if (!f->mid)
 	{
 		if (f->cases == 1 && f->lastus % (4 + f->col) - 4 < f->col / 2 && f->lastus / (4 + f->col) < f->lig / 2)
-		{
-				asc_left(f);
-		}
+				// asc_left(f);
+				left_asc(f);
 		else if (f->cases == 2 && f->lastus % (4 + f->col) - 4 < f->col / 2 && f->lastus / (4 + f->col) > f->lig / 2)
-		{
-				des_left(f);
-		}
+				// des_left(f);
+				left_des(f);
 		else if (f->cases == 3 && f->lastus % (4 + f->col) - 4 >= f->col / 2 && f->lastus / (4 + f->col) < f->lig / 2)
-		{
-				asc_right(f);
-		}
+				// asc_right(f);
+				right_asc(f);
 		else if (f->cases == 4 && f->lastus % (4 + f->col) - 4 >= f->col / 2 && f->lastus / (4 + f->col) > f->lig / 2)
-		{
-				des_right(f);
-		}
+				// des_right(f);
+				right_des(f);
 		else
 		{
 			f->mid = 1;
@@ -316,44 +310,44 @@ void	filler(t_fil *f)
 	{
 		if (f->cases == 1)
 		{
-			if (!f->touch_right && f->tr < 5)
+			if (!f->touch_right && f->tr < f->col / 5)
 				left_asc(f);
-			else if (!f->touch_left && f->tl < 10)
+			else if (!f->touch_left && f->tl < f->col / 5)
 				right_asc(f);
-			else if (!f->touch_bot && f->tr < 5)
+			else if (!f->touch_bot && f->tb < f->lig / 5)
 				asc_right(f);
 			else
 				test(f);
 		}
 		if (f->cases == 2)
 		{
-			if (!f->touch_right && f->tr < 5)
+			if (!f->touch_right && f->tr < f->col / 5)
 				left_des(f);
-			else if (!f->touch_left && f->tl < 10)
+			else if (!f->touch_left && f->tl < f->col / 5)
 				right_des(f);
-			else if (!f->touch_top && f->tt < 5)
+			else if (!f->touch_top && f->tt < f->lig / 5)
 				des_right(f);
 			else 
 				test(f);
 		}
 		if (f->cases == 3)
 		{
-			if (!f->touch_left && f->tl < 5)
+			if (!f->touch_left && f->tl < f->col / 5)
 				right_asc(f);
-			else if (!f->touch_right && f->tr < 10)
+			else if (!f->touch_right && f->tr < f->col / 5)
 				left_asc(f);
-			else if (!f->touch_bot && f->tb < 5)
+			else if (!f->touch_bot && f->tb < f->lig / 5)
 				asc_left(f);
 			else 
 				test(f);
 		}
 		if (f->cases == 4)
 		{
-			if (!f->touch_left && f->tl < 5)
+			if (!f->touch_left && f->tl < f->col / 5)
 				right_des(f);
-			else if (!f->touch_right && f->tr < 10)
+			else if (!f->touch_right && f->tr < f->col / 5)
 				left_des(f);
-			else if (!f->touch_top && f->tt < 5)
+			else if (!f->touch_top && f->tt < f->lig / 5)
 				des_left(f);
 			else 
 				test(f);
@@ -379,13 +373,13 @@ void	filler(t_fil *f)
 // 		while ((l > -1 * f->pc + 1 || k < f->col + f->pc) && !end)
 // 		{
 // 			if (can_go_there(f, i, k))
-// 				result(i, k, &end);
+// 				result(i, k, &end, f);
 // 			if (!end && can_go_there(f, i, l))
-// 				result(i, l, &end);
+// 				result(i, l, &end, f);
 // 			if (!end && can_go_there(f, j, k))
-// 				result(j, k, &end);
+// 				result(j, k, &end, f);
 // 			if (!end && can_go_there(f, j, l))
-// 				result(j, l, &end);
+// 				result(j, l, &end, f);
 // 			++k;
 // 			--l;
 // 		}
@@ -394,7 +388,6 @@ void	filler(t_fil *f)
 // 	}
 // 	if (!end)
 // 		ft_putchar('\n');
-
 // }
 
 // void	filler(t_fil *f)

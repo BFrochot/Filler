@@ -3,14 +3,42 @@
 /*                                                        :::      ::::::::   */
 /*   filler.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bfrochot <bfrochot@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cosi <cosi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/02 18:42:40 by bfrochot          #+#    #+#             */
-/*   Updated: 2017/08/22 19:39:22 by bfrochot         ###   ########.fr       */
+/*   Updated: 2017/08/26 03:51:13 by cosi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "filler.h"
+
+void	put_map(t_fil *f, char **av, char **ev)
+{
+	int i;
+
+	i = 4;
+	while (f->map[i])
+	{
+		if (!f->map[i + 1])
+			break;
+		if (i % (4 + f->col) == 0)
+		{
+			ft_putchar_fd('\n', 2);
+			i += 4;
+		}
+		if (f->map[i] == f->ply)
+			ft_putstr_fd("\033[46m \033[0m", 2);
+		else if (f->map[i] == '.')
+			ft_putchar_fd(' ', 2);
+		else
+			ft_putstr_fd("\033[47m \033[0m", 2);
+		++i;
+	}
+	ft_putchar_fd('\n', 2);
+	ft_putchar_fd('\n', 2);
+	if (f->last)
+		usleep(20000);
+}
 
 void	touch(t_fil *fil, int x, int y)
 {
@@ -160,6 +188,7 @@ void	last_piece(t_fil *f)
 				f->start = i;
 		return ;
 	}
+	f->last = 0;
 	while (f->map[++i])
 		if (f->map[i] != f->ply && f->map2[i]!= 'o' && f->map2[i] != 'x' && f->map2[i] != f->map[i])
 		{
@@ -169,7 +198,7 @@ void	last_piece(t_fil *f)
 	free(f->map2);
 }
 
-int		main(void)
+int		main(int ac, char **av, char **ev)
 {
 	t_fil	*fil;
 	char	*line;
@@ -179,6 +208,12 @@ int		main(void)
 	init(fil);
 	while (1)
 	{
+	// ft_putstr_fd("ICI\n", 2);
+	// 	i = fork();
+	// 	if (i != 0)
+	// 		execve("/usr/bin/clear", av, ev);
+	// 	waitpid(i, NULL, WUNTRACED);
+	// ft_putstr_fd("LA\n", 2);
 		fil->map = ft_strdup("");
 		if (get_next_line(0, &line) && *line == 'P')
 		{
@@ -196,13 +231,14 @@ int		main(void)
 			ft_putstr_fd("Error\n", 2);
 			break ;
 		}
-				fil->fd = open("../asdfdgh", O_APPEND | O_WRONLY);
-				ft_putstr_fd("\nmap = ", fil->fd);
-				ft_putstr_fd(fil->map, fil->fd);
-				ft_putstr_fd("STOP\n", fil->fd);
-				close(fil->fd);
+				// fil->fd = open("../asdfdgh", O_APPEND | O_WRONLY);
+				// ft_putstr_fd("\nmap = ", fil->fd);
+				// ft_putstr_fd(fil->map, fil->fd);
+				// ft_putstr_fd("STOP\n", fil->fd);
+				// close(fil->fd);
 		piece(fil, line);
 		filler(fil);
+		put_map(fil, av, ev);
 		fil->map2 = fil->map;
 	}
 }
