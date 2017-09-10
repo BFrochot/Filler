@@ -6,7 +6,7 @@
 /*   By: cosi <cosi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/02 15:06:38 by bfrochot          #+#    #+#             */
-/*   Updated: 2017/08/26 01:02:59 by cosi             ###   ########.fr       */
+/*   Updated: 2017/09/09 13:28:12 by cosi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,5 +56,6 @@ void	des_left(t_fil *fil);
 void	des_right(t_fil *fil);
 void	asc_left(t_fil *fil);
 void	asc_right(t_fil *fil);
+void	put_map(t_fil *fil);
 
 #endif

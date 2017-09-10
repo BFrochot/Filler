@@ -6,39 +6,92 @@
 /*   By: cosi <cosi@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/02 18:42:40 by bfrochot          #+#    #+#             */
-/*   Updated: 2017/08/26 03:51:13 by cosi             ###   ########.fr       */
+/*   Updated: 2017/09/10 17:43:46 by cosi             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "filler.h"
+#include "fdf.h"
 
-void	put_map(t_fil *f, char **av, char **ev)
+char	*joinspaces(char *str, int i)
 {
-	int i;
+	char s[i + 1];
 
-	i = 4;
-	while (f->map[i])
-	{
-		if (!f->map[i + 1])
-			break;
-		if (i % (4 + f->col) == 0)
-		{
-			ft_putchar_fd('\n', 2);
-			i += 4;
-		}
-		if (f->map[i] == f->ply)
-			ft_putstr_fd("\033[46m \033[0m", 2);
-		else if (f->map[i] == '.')
-			ft_putchar_fd(' ', 2);
-		else
-			ft_putstr_fd("\033[47m \033[0m", 2);
-		++i;
-	}
-	ft_putchar_fd('\n', 2);
-	ft_putchar_fd('\n', 2);
-	if (f->last)
-		usleep(20000);
+	s[i] = 0;
+	while (i--)
+		s[i] = ' ';
+	str = ft_strjoinfree(str, s, 1);
+	return (str);
 }
+
+// void	put_map(t_fil *f, char **av, char **ev)
+// {
+// 	int i;
+// 	int j;
+// 	char *map;
+
+// 	// i = 4;
+// 	// map = ft_strdup("");
+// 	// while (f->map[i])
+// 	// {
+// 	// 	if (i % (4 + f->col) == 0)
+// 	// 	{
+// 	// 		map = ft_strjoinfree(map, "\n", 1);
+// 	// 		i += 4;
+// 	// 	}
+// 	// 	if (f->map[i] == f->ply)
+// 	// 	{
+// 	// 		map = ft_strjoinfree(map, "\033[46m", 1);
+// 	// 		j = 1;
+// 	// 		while (f->map[++i] == f->ply)
+// 	// 			++j;
+// 	// 		map = joinspaces(map, j);
+// 	// 		map = ft_strjoinfree(map, "\033[0m", 1);
+// 	// 	}
+// 	// 	else if (f->map[i] == '.')
+// 	// 	{
+// 	// 		map = ft_strjoinfree(map, "\033[44m", 1);
+// 	// 		j = 1;
+// 	// 		while (f->map[++i] == '.')
+// 	// 			++j;
+// 	// 		map = joinspaces(map, j);
+// 	// 		map = ft_strjoinfree(map, "\033[0m", 1);
+// 	// 	}
+// 	// 	else
+// 	// 	{
+// 	// 		map = ft_strjoinfree(map, "\033[47m", 1);
+// 	// 		j = 1;
+// 	// 		while (f->map[++i] != '.' && f->map[i] != f->ply && !ft_isdigit(f->map[i]))
+// 	// 			++j;
+// 	// 		map = joinspaces(map, j);
+// 	// 		map = ft_strjoinfree(map, "\033[0m", 1);
+// 	// 	}
+// 	// }
+// 	// map = ft_strjoinfree(map, "\033[0m\n\n", 1);
+// 	// ft_putstr_fd(map, 2);
+// 	(void)map;
+// 	(void)j;
+// 	i = 4;
+// 	while (f->map[i])
+// 	{
+// 		if (i % (4 + f->col) == 0)
+// 		{
+// 			ft_putchar_fd('\n', 2);
+// 			i += 4;
+// 		}
+// 		if (f->map[i] == f->ply)
+// 			ft_putstr_fd("\033[46m  \033[0m", 2);
+// 		else if (f->map[i] == '.')
+// 			ft_putstr_fd("\033[44m  \033[0m", 2);
+// 		else
+// 			ft_putstr_fd("\033[47m  \033[0m", 2);
+// 		++i;
+// 	}
+// 	ft_putchar_fd('\n', 2);
+// 	ft_putchar_fd('\n', 2);
+// 	if (f->last)
+// 		usleep(20000);
+// }
 
 void	touch(t_fil *fil, int x, int y)
 {
@@ -143,7 +196,7 @@ void	piece(t_fil	*fil, char *line)
 	}
 }
 
-void	init(t_fil	*fil)
+char	init(t_fil	*fil)
 {
 	int		i;
 
@@ -151,6 +204,11 @@ void	init(t_fil	*fil)
 	fil->ply = fil->map[10] == '2' ? 'X' : 'O';
 	free(fil->map);
 	get_next_line(0, &(fil->map));
+	if (fil->map[0] != 'P' || fil->map[1] != 'l')
+	{
+		free(fil->map);
+		return (1);
+	}
 	fil->lig = atoi(fil->map + 8);
 	i = 0;
 	while(fil->map[i + 9] != ' ')
@@ -174,9 +232,10 @@ void	init(t_fil	*fil)
 	fil->tr = 0;
 	fil->touch_left = 0;
 	fil->tl = 0;
+	return (0);
 }
 
-void	last_piece(t_fil *f)
+void	last_piece(t_fil *f, t_env *ev)
 {
 	int i;
 
@@ -184,61 +243,178 @@ void	last_piece(t_fil *f)
 	if (!f->map2)
 	{
 		while (f->map[++i])
+		{
 			if (f->map[i] == f->ply)
+			{
+				mlx_put_image_to_window(ev->mlx, ev->win, ev->img2, 51 + (i % (f->col + 4) - 4) * 5, 51 + (i / (f->col + 4)) * 5);
+				// remp(i % (f->col + 4) - 4, i / (f->col + 4), 2, ev);
 				f->start = i;
+			}
+			else if (f->map[i] == 'O' || f->map[i] == 'X')
+				mlx_put_image_to_window(ev->mlx, ev->win, ev->img3, 51 + (i % (f->col + 4) - 4) * 5, 51 + (i / (f->col + 4)) * 5);
+				// remp(i % (f->col + 4) - 4, i / (f->col + 4), 3, ev);
+		}
 		return ;
 	}
 	f->last = 0;
 	while (f->map[++i])
-		if (f->map[i] != f->ply && f->map2[i]!= 'o' && f->map2[i] != 'x' && f->map2[i] != f->map[i])
+		if (f->map2[i] != f->map[i])
 		{
-			f->map[i] += 32;
-			f->last = i;
+			if (f->map[i] != f->ply && f->map2[i]!= 'o' && f->map2[i] != 'x')
+			{
+				// remp(i % (f->col + 4) - 4, i / (f->col + 4), 1, ev);
+				mlx_put_image_to_window(ev->mlx, ev->win, ev->img2, 51 + (i % (f->col + 4) - 4) * 5, 51 + (i / (f->col + 4)) * 5);
+				f->map[i] += 32;
+				f->last = i;
+			}
+			if (f->map[i] == f->ply)
+				// remp(i % (f->col + 4) - 4, i / (f->col + 4), 0, ev);
+				mlx_put_image_to_window(ev->mlx, ev->win, ev->img3, 51 + (i % (f->col + 4) - 4) * 5, 51 + (i / (f->col + 4)) * 5);
 		}
 	free(f->map2);
 }
 
-int		main(int ac, char **av, char **ev)
+int		loop(t_env *ev)
 {
-	t_fil	*fil;
 	char	*line;
 	int		i;
 
-	fil = palloc(sizeof(t_fil));
-	init(fil);
-	while (1)
+	ev->f->map = ft_strdup("");
+	if (get_next_line(0, &line) && *line == 'P')
 	{
-	// ft_putstr_fd("ICI\n", 2);
-	// 	i = fork();
-	// 	if (i != 0)
-	// 		execve("/usr/bin/clear", av, ev);
-	// 	waitpid(i, NULL, WUNTRACED);
-	// ft_putstr_fd("LA\n", 2);
-		fil->map = ft_strdup("");
-		if (get_next_line(0, &line) && *line == 'P')
-		{
-			free(line);
-			get_next_line(0, &line);
-		}
 		free(line);
-		while ((i = get_next_line(0, &line)) > 0 && *line != 'P')
-			fil->map = ft_strjoinfree(fil->map, line, 3);
-		last_piece(fil);
-		if (i == 0)
-			break ;
-		if (i == -1)
-		{
-			ft_putstr_fd("Error\n", 2);
-			break ;
-		}
-				// fil->fd = open("../asdfdgh", O_APPEND | O_WRONLY);
-				// ft_putstr_fd("\nmap = ", fil->fd);
-				// ft_putstr_fd(fil->map, fil->fd);
-				// ft_putstr_fd("STOP\n", fil->fd);
-				// close(fil->fd);
-		piece(fil, line);
-		filler(fil);
-		put_map(fil, av, ev);
-		fil->map2 = fil->map;
+		get_next_line(0, &line);
 	}
+	free(line);
+	while ((i = get_next_line(0, &line)) > 0 && *line != 'P')
+		ev->f->map = ft_strjoinfree(ev->f->map, line, 3);
+	if (i == 0)
+		return (0);
+	if (i == -1)
+	{
+		ft_putstr_fd("Error\n", 2);
+		return (0);
+	}
+	last_piece(ev->f, ev);
+	piece(ev->f, line);
+	filler(ev->f);
+	// mlx_clear_window(ev->mlx, ev->win);
+	// if (ev->f->last)
+		// usleep(50000);
+	ev->f->map2 = ev->f->map;
+	return (1);
+}
+
+int		main(void)
+{
+	t_fil	*fil;
+	// char	*line;
+	int		i;
+	// char *bit;
+	// int j;
+
+	fil = palloc(sizeof(t_fil));
+	if (init(fil))
+	{
+		ft_putstr_fd("Error on filler exec, well done !\n", 2);
+		return (2);
+	}
+
+	t_env	*ev;
+
+	ev = palloc(sizeof(t_env));
+	ev->f = fil;
+	initev(ev);
+	ev->mlx = mlx_init();
+	ev->win = mlx_new_window(ev->mlx, ev->winx, ev->winy, "test");
+	ev->img = mlx_new_image(ev->mlx, ev->winx, ev->winy);
+	ev->p_img = mlx_get_data_addr(ev->img, &ev->bpp, &(ev->s_line), &(ev->ed));
+	fdfinit(ev);
+	mlx_string_put(ev->mlx, ev->win, 0, 0, 0xFF0000,
+		" Filler");
+	mlx_put_image_to_window(ev->mlx, ev->win, ev->img, 50, 50);
+
+	ev->img2 = mlx_new_image(ev->mlx, 4, 4);
+	ev->p_img2 = mlx_get_data_addr(ev->img2, &ev->bpp, &(ev->s_line), &(ev->ed));
+	i = -1;
+	while (++i < 16)
+		((int *)ev->p_img2)[i] = 0xFF0000;
+
+	ev->img3 = mlx_new_image(ev->mlx, 4, 4);
+	ev->p_img3 = mlx_get_data_addr(ev->img3, &ev->bpp, &(ev->s_line), &(ev->ed));
+	i = -1;
+	while (++i < 16)
+		((int *)ev->p_img3)[i] = 0xFFFFF;
+
+	// while (1)
+	// {
+	// // ft_putstr_fd("ICI\n", 2);
+	// // 	i = fork();
+	// // 	if (i != 0)
+	// // 		execve("/usr/bin/clear", av, ev);
+	// // 	waitpid(i, NULL, WUNTRACED);
+	// // ft_putstr_fd("LA\n", 2);
+	// 	fil->map = ft_strdup("");
+	// 	if (get_next_line(0, &line) && *line == 'P')
+	// 	{
+	// 		free(line);
+	// 		get_next_line(0, &line);
+	// 	}
+	// 	free(line);
+	// 	while ((i = get_next_line(0, &line)) > 0 && *line != 'P')
+	// 		fil->map = ft_strjoinfree(fil->map, line, 3);
+	// 	last_piece(fil, ev);
+	// 	if (i == 0)
+	// 		break ;
+	// 	if (i == -1)
+	// 	{
+	// 		ft_putstr_fd("Error\n", 2);
+	// 		break ;
+	// 	}
+	// 			// fil->fd = open("../asdfdgh", O_TRUNC | O_WRONLY);
+	// 			// bit = palloc(ft_strlen(fil->map) * 4);
+	// 			// i = 4;
+	// 			// j = -1;
+	// 			// while (fil->map[i])
+	// 			// {
+	// 			// 	if (i % (4 + fil->col) == 0)
+	// 			// 	{
+	// 			// 		ft_putchar_fd('\n', 2);
+	// 			// 		i += 4;
+	// 			// 		bit[++j] = '\n';
+	// 			// 	}
+	// 			// 	if (fil->map[i] == fil->ply)
+	// 			// 	{
+	// 			// 		bit[++j] = '9';
+	// 			// 		bit[++j] = ' ';
+	// 			// 	}
+	// 			// 	else if (fil->map[i] == '.')
+	// 			// 	{
+	// 			// 		bit[++j] = '0';
+	// 			// 		bit[++j] = ' ';
+	// 			// 	}
+	// 			// 	else
+	// 			// 	{
+	// 			// 		bit[++j] = '-';
+	// 			// 		bit[++j] = '9';
+	// 			// 		bit[++j] = ' ';
+	// 			// 	}
+	// 			// 	++i;
+	// 			// }
+	// 			// bit[++j] = '\n';
+	// 			// bit[++j] = 0;
+	// 			// ft_putstr_fd(bit, fil->fd);
+	// 			// close(fil->fd);
+	// 	piece(fil, line);
+	// 	filler(fil);
+	// 	mlx_put_image_to_window(ev->mlx, ev->win, ev->img, 50, 50);
+	// 	usleep(20000);
+	// 	// put_map(fil);
+	// 	fil->map2 = fil->map;
+	// }
+
+	mlx_key_hook(ev->win, keymap, ev);
+	// mlx_expose_hook(ev->win, loop, ev);
+	mlx_loop_hook (ev->mlx, loop, ev);
+	mlx_loop(ev->mlx);
 }
